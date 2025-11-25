@@ -13,8 +13,8 @@ import json
 import zipfile
 from typing import Dict, List, Optional, Any
 from pathlib import Path
-from .. import db
-from ..models import User, Question, ExamRecord
+# from .. import db
+# from ..models import User, Question, ExamRecord
 
 class BackupService:
     """

@@ -31,9 +31,9 @@ def init_database():
         else:
             print("管理员账户已存在")
         
-        # 插入100道示例题目
+        # 插入300道示例题目
         question_count = Question.query.count()
-        if question_count < 100:
+        if question_count < 300:
             added_count = insert_sample_questions()
             print(f"成功添加 {added_count} 道题目，当前题库共有 {Question.query.count()} 道题")
         else:

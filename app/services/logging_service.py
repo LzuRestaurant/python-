@@ -10,8 +10,8 @@ import datetime
 import json
 import os
 from typing import Dict, List, Optional, Any
-from .. import db
-from ..models import User
+# from .. import db
+# from ..models import User
 
 class LogEntry:
     """日志条目类，表示单个日志记录"""
@@ -48,7 +48,6 @@ class LogEntry:
 class LoggingService:
     """
     日志服务类：提供详细的日志记录和管理功能。
-    包含大量辅助方法和详细的实现，以增加代码行数。
     """
     
     def __init__(self, log_file: str = "app.log", max_entries: int = 1000):
