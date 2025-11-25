@@ -1,0 +1,38 @@
+{% extends "base.html" %}
+{% block title %}考试{% endblock %}
+{% block content %}
+  <h3>考试试卷（共 {{ qs|length }} 题）</h3>
+  <form method="post">
+    {% for q in qs %}
+      <div class="card mb-2">
+        <div class="card-body">
+          <h5>Q{{ loop.index }}. {{ q.title }}</h5>
+          {% if q.qtype == 'choice' %}
+            <div class="form-check">
+              <input class="form-check-input" type="radio" name="answer_{{ q.id }}" value="A">
+              <label class="form-check-label">{{ q.option_a }}</label>
+            </div>
+            <div class="form-check">
+              <input class="form-check-input" type="radio" name="answer_{{ q.id }}" value="B">
+              <label class="form-check-label">{{ q.option_b }}</label>
+            </div>
+            <div class="form-check">
+              <input class="form-check-input" type="radio" name="answer_{{ q.id }}" value="C">
+              <label class="form-check-label">{{ q.option_c }}</label>
+            </div>
+            <div class="form-check">
+              <input class="form-check-input" type="radio" name="answer_{{ q.id }}" value="D">
+              <label class="form-check-label">{{ q.option_d }}</label>
+            </div>
+          {% elif q.qtype == 'fill' %}
+            <input class="form-control" name="answer_{{ q.id }}" type="text">
+          {% elif q.qtype == 'code' %}
+            <textarea class="form-control" name="code_{{ q.id }}" rows="10"></textarea>
+            <small class="form-text text-muted">请实现题目要求的函数，系统会运行判题模板。</small>
+          {% endif %}
+        </div>
+      </div>
+    {% endfor %}
+    <button class="btn btn-danger" type="submit">提交试卷</button>
+  </form>
+{% endblock %}

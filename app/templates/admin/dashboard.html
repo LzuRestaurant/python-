@@ -1,0 +1,9 @@
+{% extends "base.html" %}
+{% block title %}管理员{% endblock %}
+{% block content %}
+  <h3>管理员控制台</h3>
+  <p>题库题目数量：{{ qcount }}</p>
+  <a class="btn btn-primary" href="{{ url_for('admin.questions') }}">管理题库</a>
+  <a class="btn btn-secondary" href="{{ url_for('admin.records') }}">查看记录</a>
+  <a class="btn btn-danger" href="{{ url_for('auth.logout') }}">退出</a>
+{% endblock %}

@@ -1,0 +1,18 @@
+{% extends "base.html" %}
+{% block title %}代码运行{% endblock %}
+{% block content %}
+  <h3>题目：{{ q.title }}</h3>
+  <form method="post">
+    {{ form.csrf_token }}
+    <div class="form-group">
+      {{ form.code(class_='form-control', rows=12) }}
+    </div>
+    <div class="form-group">{{ form.submit(class_='btn btn-primary') }}</div>
+  </form>
+  {% if result %}
+    <div class="alert alert-info mt-2">
+      <strong>结果：</strong> {{ result.msg }}
+    </div>
+  {% endif %}
+  <a href="{{ url_for('student.practice') }}">返回练习</a>
+{% endblock %}

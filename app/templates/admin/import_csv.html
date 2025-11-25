@@ -1,0 +1,12 @@
+{% extends "base.html" %}
+{% block title %}导入 CSV{% endblock %}
+{% block content %}
+  <h3>导入题目（CSV）</h3>
+  <form method="post" enctype="multipart/form-data">
+    <div class="form-group">
+      <input type="file" name="file" class="form-control-file">
+    </div>
+    <button class="btn btn-primary" type="submit">上传并导入</button>
+  </form>
+  <p class="mt-2">CSV 列名建议：qtype,title,option_a,option_b,option_c,option_d,answer,difficulty,judge_template</p>
+{% endblock %}

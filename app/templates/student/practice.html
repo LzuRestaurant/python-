@@ -1,0 +1,38 @@
+{% extends "base.html" %}
+{% block title %}练习{% endblock %}
+{% block content %}
+  <h3>练习题</h3>
+  <form method="post" action="{{ url_for('student.exam') }}">
+    {% for q in qs %}
+      <div class="card mb-2">
+        <div class="card-body">
+          <h5>Q{{ loop.index }}. {{ q.title }}</h5>
+          {% if q.qtype == 'choice' %}
+            <div class="form-check">
+              <input class="form-check-input" type="radio" name="answer_{{ q.id }}" value="A" id="a{{ q.id }}">
+              <label class="form-check-label" for="a{{ q.id }}">{{ q.option_a }}</label>
+            </div>
+            <div class="form-check">
+              <input class="form-check-input" type="radio" name="answer_{{ q.id }}" value="B" id="b{{ q.id }}">
+              <label class="form-check-label" for="b{{ q.id }}">{{ q.option_b }}</label>
+            </div>
+            <div class="form-check">
+              <input class="form-check-input" type="radio" name="answer_{{ q.id }}" value="C" id="c{{ q.id }}">
+              <label class="form-check-label" for="c{{ q.id }}">{{ q.option_c }}</label>
+            </div>
+            <div class="form-check">
+              <input class="form-check-input" type="radio" name="answer_{{ q.id }}" value="D" id="d{{ q.id }}">
+              <label class="form-check-label" for="d{{ q.id }}">{{ q.option_d }}</label>
+            </div>
+          {% elif q.qtype == 'fill' %}
+            <input class="form-control" type="text" name="answer_{{ q.id }}">
+          {% elif q.qtype == 'code' %}
+            <textarea class="form-control" name="code_{{ q.id }}" rows="6"></textarea>
+            <a class="btn btn-sm btn-outline-primary mt-1" href="{{ url_for('student.code_run', qid=q.id) }}">运行</a>
+          {% endif %}
+        </div>
+      </div>
+    {% endfor %}
+    <button class="btn btn-primary" type="submit">提交（练习以考试方式评分）</button>
+  </form>
+{% endblock %}

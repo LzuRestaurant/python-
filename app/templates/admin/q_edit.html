@@ -1,0 +1,18 @@
+{% extends "base.html" %}
+{% block title %}题目编辑{% endblock %}
+{% block content %}
+  <h3>题目 {{ mode }}</h3>
+  <form method="post">
+    {{ form.csrf_token }}
+    <div class="form-group">{{ form.qtype.label }} {{ form.qtype(class_='form-control') }}</div>
+    <div class="form-group">{{ form.title.label }} {{ form.title(class_='form-control', rows=4) }}</div>
+    <div class="form-group">{{ form.option_a.label }} {{ form.option_a(class_='form-control') }}</div>
+    <div class="form-group">{{ form.option_b.label }} {{ form.option_b(class_='form-control') }}</div>
+    <div class="form-group">{{ form.option_c.label }} {{ form.option_c(class_='form-control') }}</div>
+    <div class="form-group">{{ form.option_d.label }} {{ form.option_d(class_='form-control') }}</div>
+    <div class="form-group">{{ form.answer.label }} {{ form.answer(class_='form-control', rows=2) }}</div>
+    <div class="form-group">{{ form.difficulty.label }} {{ form.difficulty(class_='form-control') }}</div>
+    <div class="form-group">{{ form.judge_template.label }} {{ form.judge_template(class_='form-control', rows=6) }}</div>
+    <div class="form-group">{{ form.submit(class_='btn btn-primary') }}</div>
+  </form>
+{% endblock %}

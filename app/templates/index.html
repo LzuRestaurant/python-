@@ -1,0 +1,7 @@
+{% extends "base.html" %}
+{% block title %}首页 - Python 教辅{% endblock %}
+{% block content %}
+  <h1>Python 教辅（单机版）</h1>
+  <p>请使用内置账号登录：用户名 <strong>x</strong> 密码 <strong>1</strong></p>
+  <a class="btn btn-primary" href="{{ url_for('auth.login') }}">登录</a>
+{% endblock %}

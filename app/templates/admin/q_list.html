@@ -1,0 +1,26 @@
+{% extends "base.html" %}
+{% block title %}题库列表{% endblock %}
+{% block content %}
+  <h3>题库</h3>
+  <a class="btn btn-success mb-2" href="{{ url_for('admin.question_add') }}">添加题目</a>
+  <a class="btn btn-info mb-2" href="{{ url_for('admin.import_csv') }}">导入 CSV</a>
+  <table class="table table-sm">
+    <thead><tr><th>ID</th><th>题型</th><th>标题</th><th>难度</th><th>操作</th></tr></thead>
+    <tbody>
+      {% for q in qs %}
+      <tr>
+        <td>{{ q.id }}</td>
+        <td>{{ q.qtype }}</td>
+        <td>{{ q.title[:80] }}{% if q.title|length>80 %}...{% endif %}</td>
+        <td>{{ q.difficulty }}</td>
+        <td>
+          <a class="btn btn-sm btn-primary" href="{{ url_for('admin.question_edit', qid=q.id) }}">编辑</a>
+          <form style="display:inline" method="post" action="{{ url_for('admin.question_delete', qid=q.id) }}">
+            <button class="btn btn-sm btn-danger" type="submit">删除</button>
+          </form>
+        </td>
+      </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+{% endblock %}
