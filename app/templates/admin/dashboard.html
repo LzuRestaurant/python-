@@ -1,9 +1,23 @@
 {% extends "base.html" %}
 {% block title %}管理员{% endblock %}
 {% block content %}
-  <h3>管理员控制台</h3>
-  <p>题库题目数量：{{ qcount }}</p>
-  <a class="btn btn-primary" href="{{ url_for('admin.questions') }}">管理题库</a>
-  <a class="btn btn-secondary" href="{{ url_for('admin.records') }}">查看记录</a>
-  <a class="btn btn-danger" href="{{ url_for('auth.logout') }}">退出</a>
+<div class="container mt-4">
+    <h3>管理员控制台</h3>
+    <p>题库题目数量：{{ qcount }}</p>
+    
+    <div class="mb-3">
+        <a class="btn btn-primary" href="{{ url_for('admin.questions') }}">管理题库</a>
+        <a class="btn btn-secondary" href="{{ url_for('admin.records') }}">查看记录</a>
+        <a class="btn btn-success" href="{{ url_for('admin.create_student') }}">创建学生账号</a>
+        <a class="btn btn-info" href="{{ url_for('admin.import_csv') }}">导入CSV</a>
+        <a class="btn btn-danger" href="{{ url_for('auth.logout') }}">退出</a>
+    </div>
+    
+    <h5>用户列表</h5>
+    <ul>
+        {% for user in users %}
+            <li>{{ user.username }} ({{ '管理员' if user.is_admin else '学生' }})</li>
+        {% endfor %}
+    </ul>
+</div>
 {% endblock %}

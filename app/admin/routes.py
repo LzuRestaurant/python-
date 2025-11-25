@@ -3,7 +3,7 @@ from flask import Blueprint, render_template, session, redirect, url_for, flash,
 from ..models import Question, ExamRecord, User
 from .. import db
 from flask_wtf import FlaskForm
-from wtforms import StringField, TextAreaField, SelectField, IntegerField, SubmitField
+from wtforms import StringField, TextAreaField, SelectField, IntegerField, SubmitField, PasswordField
 from wtforms.validators import DataRequired, Length
 import csv
 import io
@@ -37,6 +37,12 @@ class QuestionForm(FlaskForm):
     judge_template = TextAreaField('判题模板')
     submit = SubmitField('保存')
 
+# 添加创建学生账号的表单
+class CreateStudentForm(FlaskForm):
+    username = StringField('用户名', validators=[DataRequired(), Length(min=1, max=80)])
+    password = PasswordField('密码', validators=[DataRequired(), Length(min=1, max=100)])
+    submit = SubmitField('创建学生账号')
+
 @admin_bp.route('/dashboard')
 @admin_required
 def dashboard():
@@ -44,6 +50,34 @@ def dashboard():
     users = User.query.limit(20).all()
     return render_template('admin/dashboard.html', qcount=qcount, users=users)
 
+# 添加创建学生账号的路由
+@admin_bp.route('/create_student', methods=['GET', 'POST'])
+@admin_required
+def create_student():
+    form = CreateStudentForm()
+    if form.validate_on_submit():
+        # 检查用户名是否已存在
+        existing_user = User.query.filter_by(username=form.username.data).first()
+        if existing_user:
+            flash('用户名已存在', 'danger')
+            return render_template('admin/create_student.html', form=form)
+        
+        # 创建新学生账号
+        new_student = User(
+            username=form.username.data,
+            is_admin=False
+        )
+        new_student.set_password(form.password.data)
+        
+        db.session.add(new_student)
+        db.session.commit()
+        
+        flash(f'学生账号 "{form.username.data}" 创建成功', 'success')
+        return redirect(url_for('admin.dashboard'))
+    
+    return render_template('admin/create_student.html', form=form)
+
+# 其他路由保持不变...
 @admin_bp.route('/questions')
 @admin_required
 def questions():
