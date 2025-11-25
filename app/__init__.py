@@ -8,7 +8,6 @@ db = SQLAlchemy()
 def create_app():
     """
     创建 Flask 应用并注册蓝图。
-    这里尽量写清楚每一步，方便你理解项目结构。
     """
     app = Flask(__name__, template_folder=os.path.join(os.path.dirname(__file__), 'templates'))
     # 加载配置
@@ -33,5 +32,8 @@ def create_app():
         db.create_all()
         # 创建内置用户（如果不存在）
         models.create_builtin_users()
+        # 延迟导入服务，避免循环导入
+        from .services.logging_service import logging_service
+        logging_service.info("Flask应用启动成功", module="system")
 
     return app

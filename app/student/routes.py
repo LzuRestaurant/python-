@@ -35,8 +35,8 @@ def dashboard():
 @student_bp.route('/practice', methods=['GET'])
 @login_required
 def practice():
-    # 简单返回前 10 道题作为练习
-    qs = Question.query.limit(10).all()
+    # 简单返回 5 道题作为练习
+    qs = Question.query.limit(5).all()
     return render_template('student/practice.html', qs=qs)
 
 @student_bp.route('/exam', methods=['GET', 'POST'])
@@ -44,11 +44,25 @@ def practice():
 def exam():
     if request.method == 'GET':
         session['exam_start'] = datetime.datetime.utcnow().isoformat()
-        qs = Question.query.limit(10).all()
+        # 随机选择5道题
+        all_questions = Question.query.all()
+        if len(all_questions) > 5:
+            import random
+            qs = random.sample(all_questions, 5)
+        else:
+            qs = all_questions
         return render_template('student/exam.html', qs=qs)
+    
     # POST 提交试卷
     uid = session.get('user_id')
-    qs = Question.query.limit(10).all()
+    # 获取提交的5道题
+    all_questions = Question.query.all()
+    if len(all_questions) > 5:
+        import random
+        qs = random.sample(all_questions, 5)
+    else:
+        qs = all_questions
+    
     total = 0.0
     score = 0.0
     details = []

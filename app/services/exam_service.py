@@ -22,7 +22,7 @@ class ExamService:
         self.qs = QuestionService()
         self.analytics = AnalyticsService()
         # 默认每次试卷题量
-        self.default_paper_size = 10
+        self.default_paper_size = 5
 
     def create_paper(self, size: int = None, qtypes: Optional[List[str]] = None) -> List[Question]:
         """生成一张试卷（Question 对象列表）。"""

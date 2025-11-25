@@ -1,0 +1,135 @@
+{% extends "base.html" %}
+{% block title %}系统日志{% endblock %}
+{% block content %}
+<div class="container mt-4">
+    <h3>系统日志查看</h3>
+    
+    <!-- 统计信息 -->
+    <div class="row mb-4">
+        <div class="col-md-3">
+            <div class="card text-white bg-primary">
+                <div class="card-body">
+                    <h5 class="card-title">总日志数</h5>
+                    <p class="card-text display-4">{{ stats.total_logs if stats else 0 }}</p>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="card text-white bg-info">
+                <div class="card-body">
+                    <h5 class="card-title">信息日志</h5>
+                    <p class="card-text display-4">{{ stats.by_level.INFO if stats and stats.by_level and stats.by_level.INFO else 0 }}</p>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="card text-white bg-warning">
+                <div class="card-body">
+                    <h5 class="card-title">警告日志</h5>
+                    <p class="card-text display-4">{{ stats.by_level.WARNING if stats and stats.by_level and stats.by_level.WARNING else 0 }}</p>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="card text-white bg-danger">
+                <div class="card-body">
+                    <h5 class="card-title">错误日志</h5>
+                    <p class="card-text display-4">{{ stats.by_level.ERROR if stats and stats.by_level and stats.by_level.ERROR else 0 }}</p>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- 筛选表单 -->
+    <div class="card mb-4">
+        <div class="card-header">
+            <h5 class="mb-0">日志筛选</h5>
+        </div>
+        <div class="card-body">
+            <form method="get">
+                <div class="form-row">
+                    <div class="form-group col-md-2">
+                        <label for="level">日志级别</label>
+                        <select class="form-control" id="level" name="level">
+                            <option value="">全部</option>
+                            <option value="INFO" {% if current_level == 'INFO' %}selected{% endif %}>信息</option>
+                            <option value="WARNING" {% if current_level == 'WARNING' %}selected{% endif %}>警告</option>
+                            <option value="ERROR" {% if current_level == 'ERROR' %}selected{% endif %}>错误</option>
+                            <option value="DEBUG" {% if current_level == 'DEBUG' %}selected{% endif %}>调试</option>
+                        </select>
+                    </div>
+                    <div class="form-group col-md-3">
+                        <label for="module">模块名称</label>
+                        <input type="text" class="form-control" id="module" name="module" 
+                               value="{{ current_module if current_module else '' }}" 
+                               placeholder="输入模块名称">
+                    </div>
+                    <div class="form-group col-md-2">
+                        <label for="user_id">用户ID</label>
+                        <input type="number" class="form-control" id="user_id" name="user_id" 
+                               value="{{ current_user_id if current_user_id else '' }}" 
+                               placeholder="用户ID">
+                    </div>
+                    <div class="form-group col-md-2">
+                        <label for="count">显示数量</label>
+                        <input type="number" class="form-control" id="count" name="count" 
+                               value="{{ current_count if current_count else 100 }}" 
+                               min="1" max="1000">
+                    </div>
+                    <div class="form-group col-md-3">
+                        <label>&nbsp;</label>
+                        <div>
+                            <button type="submit" class="btn btn-primary">筛选</button>
+                            <a href="{{ url_for('admin.view_logs') }}" class="btn btn-secondary">重置</a>
+                        </div>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+    
+    <!-- 日志列表 -->
+    <div class="card">
+        <div class="card-header d-flex justify-content-between align-items-center">
+            <h5 class="mb-0">日志列表 (共 {{ logs|length }} 条)</h5>
+            <a href="{{ url_for('admin.dashboard') }}" class="btn btn-secondary btn-sm">返回控制台</a>
+        </div>
+        <div class="card-body p-0">
+            {% if logs %}
+            <div class="table-responsive">
+                <table class="table table-hover table-striped mb-0">
+                    <thead class="thead-light">
+                        <tr>
+                            <th>时间</th>
+                            <th>级别</th>
+                            <th>用户</th>
+                            <th>模块</th>
+                            <th>消息</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for log in logs %}
+                        <tr>
+                            <td>{{ log.timestamp.strftime('%Y-%m-%d %H:%M:%S') if log.timestamp else '未知' }}</td>
+                            <td>
+                                <span class="badge badge-{% if log.level == 'ERROR' %}danger{% elif log.level == 'WARNING' %}warning{% elif log.level == 'INFO' %}info{% else %}secondary{% endif %}">
+                                    {{ log.level }}
+                                </span>
+                            </td>
+                            <td>{{ log.user_id if log.user_id else '系统' }}</td>
+                            <td>{{ log.module if log.module else '未知' }}</td>
+                            <td>{{ log.message }}</td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+            {% else %}
+            <div class="text-center p-4">
+                <p class="text-muted">没有找到符合条件的日志记录</p>
+            </div>
+            {% endif %}
+        </div>
+    </div>
+</div>
+{% endblock %}

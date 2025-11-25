@@ -1,23 +1,108 @@
 {% extends "base.html" %}
-{% block title %}管理员{% endblock %}
+{% block title %}管理员控制台{% endblock %}
 {% block content %}
 <div class="container mt-4">
     <h3>管理员控制台</h3>
-    <p>题库题目数量：{{ qcount }}</p>
     
-    <div class="mb-3">
-        <a class="btn btn-primary" href="{{ url_for('admin.questions') }}">管理题库</a>
-        <a class="btn btn-secondary" href="{{ url_for('admin.records') }}">查看记录</a>
-        <a class="btn btn-success" href="{{ url_for('admin.create_student') }}">创建学生账号</a>
-        <a class="btn btn-info" href="{{ url_for('admin.import_csv') }}">导入CSV</a>
-        <a class="btn btn-danger" href="{{ url_for('auth.logout') }}">退出</a>
+    <!-- 统计信息卡片 -->
+    <div class="row mb-4">
+        <div class="col-md-3">
+            <div class="card text-center">
+                <div class="card-body">
+                    <h5 class="card-title">题库统计</h5>
+                    <p class="card-text display-4">{{ qcount }}</p>
+                    <p class="card-text">题目数量</p>
+                    <a href="{{ url_for('admin.questions') }}" class="btn btn-primary btn-sm">管理题库</a>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="card text-center">
+                <div class="card-body">
+                    <h5 class="card-title">用户统计</h5>
+                    <p class="card-text display-4">{{ users|length }}</p>
+                    <p class="card-text">用户数量</p>
+                    <a href="{{ url_for('admin.create_student') }}" class="btn btn-success btn-sm">创建账号</a>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="card text-center">
+                <div class="card-body">
+                    <h5 class="card-title">系统日志</h5>
+                    <p class="card-text display-4">-</p>
+                    <p class="card-text">日志查看</p>
+                    <a href="{{ url_for('admin.view_logs') }}" class="btn btn-info btn-sm">查看日志</a>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="card text-center">
+                <div class="card-body">
+                    <h5 class="card-title">数据备份</h5>
+                    <p class="card-text display-4">-</p>
+                    <p class="card-text">备份管理</p>
+                    <a href="{{ url_for('admin.manage_backups') }}" class="btn btn-warning btn-sm">备份管理</a>
+                </div>
+            </div>
+        </div>
     </div>
     
-    <h5>用户列表</h5>
-    <ul>
-        {% for user in users %}
-            <li>{{ user.username }} ({{ '管理员' if user.is_admin else '学生' }})</li>
-        {% endfor %}
-    </ul>
+    <!-- 快速操作按钮 -->
+    <div class="card mb-4">
+        <div class="card-header">
+            <h5 class="mb-0">快速操作</h5>
+        </div>
+        <div class="card-body">
+            <div class="btn-group" role="group">
+                <a class="btn btn-primary" href="{{ url_for('admin.questions') }}">管理题库</a>
+                <a class="btn btn-success" href="{{ url_for('admin.create_student') }}">创建学生账号</a>
+                <a class="btn btn-info" href="{{ url_for('admin.view_logs') }}">查看系统日志</a>
+                <a class="btn btn-warning" href="{{ url_for('admin.manage_backups') }}">数据备份管理</a>
+                <a class="btn btn-secondary" href="{{ url_for('admin.records') }}">查看考试记录</a>
+                <a class="btn btn-dark" href="{{ url_for('admin.import_csv') }}">批量导入题目</a>
+                <a class="btn btn-danger" href="{{ url_for('auth.logout') }}">退出登录</a>
+            </div>
+        </div>
+    </div>
+    
+    <!-- 最近用户列表 -->
+    <div class="card">
+        <div class="card-header">
+            <h5 class="mb-0">用户列表 (最近 {{ users|length }} 个)</h5>
+        </div>
+        <div class="card-body">
+            {% if users %}
+            <div class="table-responsive">
+                <table class="table table-hover">
+                    <thead>
+                        <tr>
+                            <th>ID</th>
+                            <th>用户名</th>
+                            <th>角色</th>
+                            <th>创建时间</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for user in users %}
+                        <tr>
+                            <td>{{ user.id }}</td>
+                            <td>{{ user.username }}</td>
+                            <td>
+                                <span class="badge badge-{{ 'primary' if user.is_admin else 'secondary' }}">
+                                    {{ '管理员' if user.is_admin else '学生' }}
+                                </span>
+                            </td>
+                            <td>{{ user.created_at.strftime('%Y-%m-%d %H:%M') if user.created_at else '未知' }}</td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+            {% else %}
+            <p class="text-muted">暂无用户数据</p>
+            {% endif %}
+        </div>
+    </div>
 </div>
 {% endblock %}

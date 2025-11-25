@@ -12,3 +12,6 @@ class Config:
     ITEMS_PER_PAGE = 20
     # 多媒体最大限制 (MB) - 这里保留配置但我们不会实际上传大文件
     MAX_MEDIA_MB = 300
+    # 备份配置
+    BACKUP_DIR = os.path.join(BASE_DIR, 'backups')
+    MAX_BACKUPS = 10

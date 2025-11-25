@@ -8,4 +8,6 @@ __all__ = [
     "QuestionService",
     "ExamService",
     "AnalyticsService",
+    "LoggingService",
+    "BackupService",
 ]

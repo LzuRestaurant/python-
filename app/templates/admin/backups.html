@@ -1,0 +1,122 @@
+{% extends "base.html" %}
+{% block title %}备份管理{% endblock %}
+{% block content %}
+<div class="container mt-4">
+    <h3>数据库备份管理</h3>
+    
+    <!-- 统计信息 -->
+    <div class="row mb-4">
+        <div class="col-md-4">
+            <div class="card text-white bg-primary">
+                <div class="card-body">
+                    <h5 class="card-title">备份数量</h5>
+                    <p class="card-text display-4">{{ stats.total_backups if stats else 0 }}</p>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-4">
+            <div class="card text-white bg-success">
+                <div class="card-body">
+                    <h5 class="card-title">总大小</h5>
+                    <p class="card-text display-4">{{ stats.total_size_mb if stats else 0 }} MB</p>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-4">
+            <div class="card text-white bg-info">
+                <div class="card-body">
+                    <h5 class="card-title">备份目录</h5>
+                    <p class="card-text">{{ stats.backup_dir if stats else '未知' }}</p>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- 创建备份表单 -->
+    <div class="card mb-4">
+        <div class="card-header">
+            <h5 class="mb-0">创建新备份</h5>
+        </div>
+        <div class="card-body">
+            <form method="post">
+                {{ form.csrf_token }}
+                <div class="form-row">
+                    <div class="form-group col-md-8">
+                        <label for="description">备份描述</label>
+                        <input type="text" class="form-control" id="description" name="description" 
+                               placeholder="输入备份描述（可选）" value="{{ form.description.data or '' }}">
+                    </div>
+                    <div class="form-group col-md-4">
+                        <label>&nbsp;</label>
+                        <div>
+                            <button type="submit" class="btn btn-success">创建备份</button>
+                        </div>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+    
+    <!-- 备份列表 -->
+    <div class="card">
+        <div class="card-header d-flex justify-content-between align-items-center">
+            <h5 class="mb-0">备份列表 (共 {{ backups|length }} 个)</h5>
+            <a href="{{ url_for('admin.dashboard') }}" class="btn btn-secondary btn-sm">返回控制台</a>
+        </div>
+        <div class="card-body p-0">
+            {% if backups %}
+            <div class="table-responsive">
+                <table class="table table-hover table-striped mb-0">
+                    <thead class="thead-light">
+                        <tr>
+                            <th>文件名</th>
+                            <th>大小</th>
+                            <th>创建时间</th>
+                            <th>描述</th>
+                            <th>操作</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for backup in backups %}
+                        <tr>
+                            <td>{{ backup.filename }}</td>
+                            <td>{{ "%.2f"|format(backup.size / 1024) }} KB</td>
+                            <td>{{ backup.modified_time[:19] if backup.modified_time else '未知' }}</td>
+                            <td>{{ backup.metadata.description if backup.metadata and backup.metadata.description else '无描述' }}</td>
+                            <td>
+                                <div class="btn-group btn-group-sm">
+                                    <form method="post" action="{{ url_for('admin.restore_backup', filename=backup.filename) }}" 
+                                          onsubmit="return confirm('确定要恢复此备份吗？当前数据库将被覆盖！')">
+                                        <button type="submit" class="btn btn-warning btn-sm">恢复</button>
+                                    </form>
+                                    <form method="post" action="{{ url_for('admin.delete_backup', filename=backup.filename) }}" 
+                                          onsubmit="return confirm('确定要删除此备份吗？此操作不可撤销！')">
+                                        <button type="submit" class="btn btn-danger btn-sm ml-1">删除</button>
+                                    </form>
+                                </div>
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+            {% else %}
+            <div class="text-center p-4">
+                <p class="text-muted">暂无备份文件</p>
+            </div>
+            {% endif %}
+        </div>
+    </div>
+    
+    <!-- 操作说明 -->
+    <div class="alert alert-info mt-4">
+        <h5>操作说明：</h5>
+        <ul class="mb-0">
+            <li><strong>创建备份</strong>：将当前数据库和配置文件打包为ZIP文件</li>
+            <li><strong>恢复备份</strong>：用选定的备份文件覆盖当前数据库（会自动创建恢复前的备份）</li>
+            <li><strong>删除备份</strong>：永久删除选定的备份文件</li>
+            <li>系统最多保留 {{ backup_service.max_backups if backup_service else 10 }} 个备份文件，超过数量会自动清理最旧的备份</li>
+        </ul>
+    </div>
+</div>
+{% endblock %}
